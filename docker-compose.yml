@@ -26,6 +26,8 @@ services:
     working_dir: ${APP_PATH_CONTAINER}
     depends_on:
       - composer
+    networks:
+      - app-network
 
   composer:
     image: composer:latest
@@ -33,3 +35,5 @@ services:
       - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
     working_dir: ${APP_PATH_CONTAINER}
     command: composer install --ignore-platform-reqs --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    networks:
+      - app-network
