@@ -1,0 +1,15 @@
+version: "3.7"
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+
+  server:
+    image: adminko/test:backend
+    command: /root/server
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
