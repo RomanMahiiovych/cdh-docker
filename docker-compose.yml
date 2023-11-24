@@ -13,3 +13,23 @@ services:
       - "3000:3000"
     networks:
       - app-network
+
+  client:
+    build: ./php
+    environment:
+      - APACHE_RUN_USER=www-data
+    volumes:
+      - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+      - ${SERVER_CONFIGURATION_PATH}:/etc/apache2/sites-available
+    ports:
+      - 8080:80
+    working_dir: ${APP_PATH_CONTAINER}
+    depends_on:
+      - composer
+
+  composer:
+    image: composer:latest
+    volumes:
+      - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+    working_dir: ${APP_PATH_CONTAINER}
+    command: composer install --ignore-platform-reqs --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
