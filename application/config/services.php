@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'adminko' => [
+        'uri' => env('COMPANIES_API_URI'),
+        'x_client_header' => env('X_CLIENT_HEADER_VALUE'),
+    ],
 ];
