@@ -26,6 +26,7 @@ services:
     working_dir: ${APP_PATH_CONTAINER}
     depends_on:
       - composer
+      - db
     networks:
       - app-network
 
@@ -35,5 +36,23 @@ services:
       - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
     working_dir: ${APP_PATH_CONTAINER}
     command: composer install --ignore-platform-reqs --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    networks:
+      - app-network
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ${DB_PATH_HOST}:/var/lib/mysql
+    networks:
+      - app-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6080:8080
     networks:
       - app-network
