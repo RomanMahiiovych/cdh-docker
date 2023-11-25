@@ -11,6 +11,8 @@ class Position extends Model
     use HasFactory, HasUuids;
 
     protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
        'name', 'company_id', 'user_id'

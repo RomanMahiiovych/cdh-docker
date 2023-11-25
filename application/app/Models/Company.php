@@ -13,6 +13,8 @@ class Company extends Model
     use HasFactory, HasUuids, Filterable;
 
     protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'name', 'address'
