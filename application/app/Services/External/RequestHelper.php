@@ -17,10 +17,15 @@ class RequestHelper implements RequestInterface
         return "$this->uri/$path";
     }
 
-    public function send(string $path): Response
+    public function query(array $extra = []): array
+    {
+        return [...$extra];
+    }
+
+    public function send(string $path, array $extra): Response
     {
         return Http::withHeader('X-Client', $this->xClientToken)
-            ->get($this->url($path))
+            ->get($this->url($path), $this->query($extra))
             ->throw();
     }
 }

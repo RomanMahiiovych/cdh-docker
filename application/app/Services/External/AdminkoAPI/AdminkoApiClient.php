@@ -14,30 +14,30 @@ class AdminkoApiClient extends RequestHelper implements APICompaniesInterface
      * @return Collection
      * @throws BaseApiException
      */
-    public function getUsers(): Collection
+    public function getUsers($page = 1): Collection
     {
         try {
-            $users = $this->send('users');
+            $users = $this->send('users', ['page' => $page]);
         } catch (RequestException $exception) {
             throw new BaseApiException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        return $users->collect();
+        return $users->collect('users');
     }
 
     /**
      * @return Collection
      * @throws BaseApiException
      */
-    public function getCompanies(): Collection
+    public function getCompanies($page = 1): Collection
     {
         try {
-            $companies = $this->send('companies');
+            $companies = $this->send('companies', ['page' => $page]);
         } catch (RequestException $exception) {
             throw new BaseApiException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        return $companies->collect();
+        return $companies->collect('compaines');
     }
 
     /**
@@ -48,7 +48,7 @@ class AdminkoApiClient extends RequestHelper implements APICompaniesInterface
     public function getCompanyPositions(string $companyUuid): Collection
     {
         try {
-            $positions = $this->send("company/{$companyUuid}");
+            $positions = $this->send("company/{$companyUuid}", []);
         } catch (RequestException $exception) {
             throw new BaseApiException($exception->getMessage(), $exception->getCode(), $exception);
         }
