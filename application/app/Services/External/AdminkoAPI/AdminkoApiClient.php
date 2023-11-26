@@ -53,6 +53,6 @@ class AdminkoApiClient extends RequestHelper implements APICompaniesInterface
             throw new BaseApiException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        return $positions->collect();
+        return $positions->collect('positions');
     }
 }
