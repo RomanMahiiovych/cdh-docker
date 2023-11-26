@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('companies', [CompaniesApiController::class, 'index']);
+Route::get('companies', [CompaniesApiController::class, 'index'])->name('api.companies.list');

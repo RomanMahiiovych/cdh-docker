@@ -35,10 +35,10 @@ class SaveCompaniesDataCommand extends Command
                 new SaveUsersDataJob,
                 new SavePositionsDataJob,
             ])->dispatch();
+
+            $this->info('Database successfully updated!');
         } catch (\Throwable) {
             $this->info('Database has not successfully updated!');
         }
-
-        $this->info('Database successfully updated!');
     }
 }
