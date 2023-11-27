@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use App\Services\External\AdminkoAPI\AdminkoApiClient;
+use App\Services\External\APICompaniesInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,6 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class SaveUsersDataJob implements ShouldQueue
 {
@@ -22,7 +23,7 @@ class SaveUsersDataJob implements ShouldQueue
      * Execute the job.
      * @throws \App\Exceptions\BaseApiException
      */
-    public function handle(AdminkoApiClient $client): void
+    public function handle(APICompaniesInterface $client): void
     {
         $page = 1;
 
@@ -36,7 +37,8 @@ class SaveUsersDataJob implements ShouldQueue
                 if ($this->notExistsUserInDatabase($user['uuid'])) {
                     try {
                         User::create($user);
-                    } catch (\Throwable) {
+                    } catch (\Throwable $throwable) {
+                        Log::error('SaveUsersDataJob failed: ' . $throwable->getMessage());
                         continue;
                     }
                 }

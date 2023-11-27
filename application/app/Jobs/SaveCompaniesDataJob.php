@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Company;
-use App\Services\External\AdminkoAPI\AdminkoApiClient;
+use App\Services\External\APICompaniesInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class SaveCompaniesDataJob implements ShouldQueue
 {
@@ -20,7 +21,7 @@ class SaveCompaniesDataJob implements ShouldQueue
      * Execute the job.
      * @throws \App\Exceptions\BaseApiException
      */
-    public function handle(AdminkoApiClient $client): void
+    public function handle(APICompaniesInterface $client): void
     {
         $page = 1;
 
@@ -34,7 +35,8 @@ class SaveCompaniesDataJob implements ShouldQueue
                 if ($this->notExistsCompanyInDatabase($company['uuid'])) {
                     try {
                         Company::create($company);
-                    } catch (\Throwable) {
+                    } catch (\Throwable $throwable) {
+                        Log::error('SaveCompaniesDataJob failed: ' . $throwable->getMessage());
                         continue;
                     }
                 }
@@ -50,7 +52,7 @@ class SaveCompaniesDataJob implements ShouldQueue
         return Company::where('uuid', $companyId)->doesntExist();
     }
 
-    public function transform(Collection $companies)
+    public function transform(Collection $companies): Collection
     {
         return $companies->map(function ($company) {
             return [

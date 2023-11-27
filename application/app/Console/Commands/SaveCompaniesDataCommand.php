@@ -7,9 +7,13 @@ use App\Jobs\SavePositionsDataJob;
 use App\Jobs\SaveUsersDataJob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 
 class SaveCompaniesDataCommand extends Command
 {
+    public const SUCCESS_MESSAGE = 'Database successfully updated!';
+    public const FAILURE_MESSAGE = 'Database has not successfully updated';
+
     /**
      * The name and signature of the console command.
      *
@@ -36,9 +40,10 @@ class SaveCompaniesDataCommand extends Command
                 new SavePositionsDataJob,
             ])->dispatch();
 
-            $this->info('Database successfully updated!');
-        } catch (\Throwable) {
-            $this->info('Database has not successfully updated!');
+            $this->info(self::SUCCESS_MESSAGE);
+        } catch (\Throwable $throwable) {
+            Log::error(self::FAILURE_MESSAGE . ' : ' . $throwable->getMessage());
+            $this->info(self::FAILURE_MESSAGE);
         }
     }
 }

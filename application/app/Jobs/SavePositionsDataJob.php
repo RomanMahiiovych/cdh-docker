@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Company;
 use App\Models\Position;
-use App\Services\External\AdminkoAPI\AdminkoApiClient;
+use App\Services\External\APICompaniesInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SavePositionsDataJob implements ShouldQueue
@@ -23,12 +24,12 @@ class SavePositionsDataJob implements ShouldQueue
      * Execute the job.
      * @throws \App\Exceptions\BaseApiException
      */
-    public function handle(AdminkoApiClient $client): void
+    public function handle(APICompaniesInterface $client): void
     {
         $companies = Company::all();
         foreach ($companies as $company)
         {
-            $positions = $client->getCompanyPositions($company->uuid);
+            $positions = $client->getCompanyPositions($company->getKey());
 
             $transformedPositionsCollection = $this->transform($positions);
 
@@ -37,7 +38,8 @@ class SavePositionsDataJob implements ShouldQueue
                 if ($this->notExistsPositionInDatabase($position)) {
                     try {
                         Position::create($position);
-                    } catch (\Throwable) {
+                    } catch (\Throwable $throwable) {
+                        Log::error('SavePositionsDataJob failed: ' . $throwable->getMessage());
                         continue;
                     }
                 }

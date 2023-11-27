@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Commands;
 
+use App\Console\Commands\SaveCompaniesDataCommand;
 use App\Jobs\SaveCompaniesDataJob;
 use App\Jobs\SavePositionsDataJob;
 use App\Jobs\SaveUsersDataJob;
@@ -17,10 +18,6 @@ class SaveCompaniesDataCommandTest extends TestCase
 
         $this->artisan('save:companies-data');
 
-        Bus::assertDispatched(SaveCompaniesDataJob::class);
-//        Bus::assertDispatched(SaveUsersDataJob::class);
-//        Bus::assertDispatched(SavePositionsDataJob::class);
-
         Bus::assertChained([
             SaveCompaniesDataJob::class,
             SaveUsersDataJob::class,
@@ -31,7 +28,7 @@ class SaveCompaniesDataCommandTest extends TestCase
     public function test_command_displays_info_message_on_success()
     {
         $this->artisan('save:companies-data')
-            ->expectsOutput('Database successfully updated!')
+            ->expectsOutput(SaveCompaniesDataCommand::SUCCESS_MESSAGE)
             ->assertExitCode(0);
     }
 
