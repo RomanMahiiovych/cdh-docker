@@ -18,13 +18,10 @@ class SavePositionsDataJobTest extends TestCase
     {
         $client = app(APICompaniesInterface::class);
 
-        SaveCompaniesDataJob::dispatchSync($client);
-        SaveUsersDataJob::dispatchSync($client);
+        $this->artisan('save:companies-data');
 
         $company = Company::inRandomOrder()->first();
         $positions = $client->getCompanyPositions(companyUuid: $company->getKey());
-
-        SavePositionsDataJob::dispatchSync($client);
 
         foreach ($positions as $position) {
             $this->assertDatabaseHas('positions', [
